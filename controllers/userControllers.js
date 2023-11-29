@@ -111,62 +111,59 @@ const user_login = async (req, res) => {
     const mobile = req.body.mobile;
     const password = req.body.password;
 
-    /* // It is not working using login
-    const userData = await user.findOne({ email: email });
-    const userMobile = await user.findOne({ mobile: mobile });
 
 
     if (userData || userMobile) {
-      */
+      * /
 
-    const userData = await user.findOne({
-      $or: [{ email: email }, { mobile: mobile }]
-    });
+      const userData = await user.findOne({
+        $or: [{ email: email }, { mobile: mobile }]
+      });
 
-    if (userData) {
+      if (userData) {
 
-      const passwordMatch = await bcyptjs.compare(password, userData.password);
+        const passwordMatch = await bcyptjs.compare(password, userData.password);
 
-      // userData.password is a hashing password
+        // userData.password is a hashing password
 
-      if (passwordMatch) {
+        if (passwordMatch) {
 
-        const tokenData = await create_token(userData._id);
+          const tokenData = await create_token(userData._id);
 
-        const userResult = {
-          _id: userData._id,
-          name: userData.name,
-          email: userData.email,
+          const userResult = {
+            _id: userData._id,
+            name: userData.name,
+            email: userData.email,
 
 
-          mobile: userData.mobile,
+            mobile: userData.mobile,
 
-          token: tokenData
+            token: tokenData
+          }
+          const response = {
+            success: true,
+            msg: "User Details",
+            data: userResult
+          }
+          res.status(200).send(response);
+
         }
-        const response = {
-          success: true,
-          msg: "User Details",
-          data: userResult
+        else {
+          res.status(200).send({ success: false, msg: "Login details are incorrect" });
         }
-        res.status(200).send(response);
-
       }
       else {
         res.status(200).send({ success: false, msg: "Login details are incorrect" });
       }
-    }
-    else {
-      res.status(200).send({ success: false, msg: "Login details are incorrect" });
-    }
 
-  }
+    }
   catch (error) {
-    res.status(400).send(error.message)
+      res.status(400).send(error.message)
+    }
   }
-}
 
 module.exports = {
-  register_user,
-  user_login
+    register_user,
+    user_login
 
-}
+  }
